@@ -4,9 +4,19 @@ from data import zidian_y, loader, zidian_xr, zidian_yr
 from mask import mask_pad, mask_tril
 from model import Transformer
 
+# onnx-tf要求tensorflow==2.2.0
+# onnx-tf==1.6
+import torch
+import torch.nn as nn
+import torch.onnx
+import onnx
+from onnx_tf.backend import prepare
+import argparse
+import os
 
 # 预测函数
 def predict(x):
+    print("预测输入:", x)
     # x = [1, 50]
     model.eval()
 
@@ -53,7 +63,8 @@ def predict(x):
 
         # 取出分类结果
         # [1, 39] -> [1]
-        out = out.argmax(dim=1).detach()
+        # out = out.argmax(dim=1).detach()
+        out = out.argmax(dim=1)
 
         # 以当前词预测下一个词,填到结果中
         target[:, i + 1] = out
@@ -99,7 +110,34 @@ for epoch in range(1):
             lr = optim.param_groups[0]['lr']
             print(epoch, i, lr, loss.item(), accuracy)
 
+    print("----------------------")
     sched.step()
+    # torch.save("/Users/zard/Documents/GitHub/Transformer_Example/my_test")
+
+    # model = torch.nn.DataParallel(model)
+    #
+    # # 设置模型输入维度
+    # input = torch.randn([1, 2, 3])
+    #
+    # # 设置输入张量名，多个输入就是多个名
+    # input_names = ["input"]
+    #
+    # # 设置输出张量名
+    # output_names = ["output"]
+    #
+    # # 自定义onnx文件名和路径
+    # # onnx_filename = "model.onnx"
+    # onnx_filename = "/Users/zard/Documents/GitHub/Transformer_Example/my_test/model.onnx"
+    #
+    # # 执行转化和保存
+    # torch.onnx.export(model.module, input, onnx_filename, verbose=True, input_names=input_names,
+    #                   output_names=output_names)
+    #
+    # #
+    # onnx_model = onnx.load("model.onnx")  # load onnx model
+    # tf_exp = prepare(onnx_model)  # prepare tf representation
+    # tf_exp.export_graph("model.pb")  # export the model
+    print("----------------------")
 
 # 测试
 for i, (x, y) in enumerate(loader):
@@ -107,6 +145,10 @@ for i, (x, y) in enumerate(loader):
 
 for i in range(8):
     print(i)
+    print("输入参数:", x[i])
     print(''.join([zidian_xr[i] for i in x[i].tolist()]))
     print(''.join([zidian_yr[i] for i in y[i].tolist()]))
     print(''.join([zidian_yr[i] for i in predict(x[i].unsqueeze(0))[0].tolist()]))
+    print('-------------------')
+
+

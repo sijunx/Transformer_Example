@@ -1,13 +1,13 @@
 # 定义字典
 zidian_x = '<SOS>,<EOS>,<PAD>,0,1,2,3,4,5,6,7,8,9,q,w,e,r,t,y,u,i,o,p,a,s,d,f,g,h,j,k,l,z,x,c,v,b,n,m'
 zidian_x = {word: i for i, word in enumerate(zidian_x.split(','))}
-
+print("zidan_x:", zidian_x)
 zidian_xr = [k for k, v in zidian_x.items()]
-
+print("zidian_xr:", zidian_xr)
 zidian_y = {k.upper(): v for k, v in zidian_x.items()}
-
+print("zidian_y:", zidian_y)
 zidian_yr = [k for k, v in zidian_y.items()]
-
+print("zidian_yr:", zidian_yr)
 import random
 
 import numpy as np
@@ -67,7 +67,6 @@ def get_data():
     # 转tensor
     x = torch.LongTensor(x)
     y = torch.LongTensor(y)
-
     return x, y
 
 
@@ -126,7 +125,9 @@ class Dataset(torch.utils.data.Dataset):
         super(Dataset, self).__init__()
 
     def __len__(self):
-        return 100000
+        # return 100000
+        # return 15000
+        return 5000
 
     def __getitem__(self, i):
         return get_data()
@@ -138,3 +139,16 @@ loader = torch.utils.data.DataLoader(dataset=Dataset(),
                                      drop_last=True,
                                      shuffle=True,
                                      collate_fn=None)
+
+# for i, dataset in enumerate(loader):
+#     print("i:", i)
+#     a = dataset[0][0]
+#     print("a:", a)
+#     print("a.shape:", a.shape)
+#     for icount in range(len(a)):
+#         b = a[icount]
+#         print("数值：", zidian_xr[b])
+#     break
+
+dd = Dataset()
+print("dd:", dd.__getitem__(0))
