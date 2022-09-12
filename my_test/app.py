@@ -2,7 +2,7 @@
 import datetime
 import torch
 
-from flask import Flask, request, json
+from flask import Flask, request, json, jsonify
 
 # from main01 import predict
 
@@ -25,7 +25,8 @@ def hello():
     x = request.get_json()
     print("--name:", x['name'])
 
-
+    json_str = jsonify(name="jim", age=18)
+    print(json_str)
 
 
     # x = [0, 30, 35, 23, 17, 29, 31, 27, 34, 19, 27, 31, 29, 36, 36, 20, 35, 9,
